@@ -113,7 +113,6 @@ public class KafkaSwaggerBuilder {
     private StringProperty stringProperty() {
         return new StringProperty()
                 .required(true)
-                ._default("")
                 .example("");
     }
 }
