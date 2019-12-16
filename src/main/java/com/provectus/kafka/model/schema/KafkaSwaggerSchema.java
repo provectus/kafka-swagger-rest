@@ -1,10 +1,7 @@
-package com.provectus.kafka.swagger.model;
+package com.provectus.kafka.model.schema;
 
 import com.fasterxml.jackson.dataformat.avro.AvroSchema;
 import com.provectus.kafka.schemaregistry.model.Schema;
-import com.provectus.kafka.swagger.model.topic.TopicParamSchema;
-import com.provectus.kafka.swagger.model.topic.TopicParamSchemaType;
-import com.provectus.kafka.swagger.model.topic.TopicSwaggerSchema;
 import lombok.*;
 
 import java.util.HashMap;

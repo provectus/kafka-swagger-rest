@@ -1,4 +1,4 @@
-package com.provectus.kafka.swagger.model.topic;
+package com.provectus.kafka.model.schema;
 
 import com.fasterxml.jackson.dataformat.avro.AvroSchema;
 import lombok.*;

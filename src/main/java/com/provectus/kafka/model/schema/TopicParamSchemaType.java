@@ -1,4 +1,4 @@
-package com.provectus.kafka.swagger.model.topic;
+package com.provectus.kafka.model.schema;
 
 public enum TopicParamSchemaType {
 

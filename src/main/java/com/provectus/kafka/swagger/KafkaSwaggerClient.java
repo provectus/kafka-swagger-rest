@@ -5,8 +5,11 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.schemaregistry.SchemaRegistryListener;
 import com.provectus.kafka.schemaregistry.model.Schema;
-import com.provectus.kafka.swagger.model.KafkaSwaggerConfig;
+import com.provectus.kafka.model.config.KafkaSwaggerConfig;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.AdminClientConfig;
+import org.apache.kafka.clients.admin.ListTopicsOptions;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.listener.ContainerProperties;
@@ -14,13 +17,19 @@ import org.springframework.kafka.listener.KafkaMessageListenerContainer;
 import org.springframework.kafka.listener.MessageListener;
 import org.springframework.kafka.support.Acknowledgment;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+
 @Slf4j
-public class KafkaSwaggerClient implements MessageListener<Object, Object> {
+public class KafkaSwaggerClient {
 
     private final KafkaSwaggerConfig kafkaSwaggerConfig;
     private KafkaMessageListenerContainer kafkaMessageListenerContainer;
 
-    private SchemaRegistryListener schemaRegistryListener;
+    private List<SchemaRegistryListener> schemaRegistryListeners = new ArrayList<>();
 
     public KafkaSwaggerClient(KafkaSwaggerConfig kafkaSwaggerConfig) {
         this.kafkaSwaggerConfig = kafkaSwaggerConfig;
@@ -29,13 +38,66 @@ public class KafkaSwaggerClient implements MessageListener<Object, Object> {
 
     private void initKafkaListenerContainer() {
         ContainerProperties containerProps = new ContainerProperties("_schemas");
-        containerProps.setMessageListener(this);
+        containerProps.setMessageListener(new MessageListener<Object, Object>(){
+
+            @Override
+            public void onMessage(ConsumerRecord<Object, Object> data) {
+                log.trace("onMessage {}", data);
+
+                if (schemaRegistryListeners.isEmpty()) return;
+
+                if (data.value() != null) {
+                    try {
+                        Schema schema = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                                .readValue((String) data.value(), Schema.class);
+
+                        schemaRegistryListeners.stream()
+                                .forEach(schemaRegistryListener -> schemaRegistryListener.onSchema(schema));
+                    } catch (JsonProcessingException e) {
+                        log.error(e.getMessage(), e);
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+
+            @Override
+            public void onMessage(ConsumerRecord<Object, Object> data, Acknowledgment acknowledgment) {
+                log.trace("onMessage {} {}", data, acknowledgment);
+            }
+
+            @Override
+            public void onMessage(ConsumerRecord<Object, Object> data, Consumer<?, ?> consumer) {
+                log.trace("onMessage {} {}", data, consumer);
+            }
+
+            @Override
+            public void onMessage(ConsumerRecord<Object, Object> data, Acknowledgment acknowledgment, Consumer<?, ?> consumer) {
+                log.trace("onMessage {} {}", data, acknowledgment, consumer);
+            }
+        });
+
         kafkaMessageListenerContainer = KafkaClientUtils.createContainer(kafkaSwaggerConfig, containerProps);
         kafkaMessageListenerContainer.start();
     }
 
+    public Set<String> getTopics() {
+        Properties properties = new Properties();
+        properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+
+        AdminClient adminClient = AdminClient.create(properties);
+
+        ListTopicsOptions listTopicsOptions = new ListTopicsOptions();
+        listTopicsOptions.listInternal(true);
+
+        try {
+            return adminClient.listTopics(listTopicsOptions).names().get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void subscribe(SchemaRegistryListener schemaRegistryListener) {
-        this.schemaRegistryListener = schemaRegistryListener;
+        this.schemaRegistryListeners.add(schemaRegistryListener);
     }
 
     public void start() {
@@ -44,39 +106,5 @@ public class KafkaSwaggerClient implements MessageListener<Object, Object> {
 
     public void stop() {
         kafkaMessageListenerContainer.stop();
-    }
-
-    @Override
-    public void onMessage(ConsumerRecord<Object, Object> data) {
-        log.info("onMessage {}", data);
-
-        if (schemaRegistryListener == null) return;
-
-        if (data.value() != null) {
-            try {
-                Schema schema = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                        .readValue((String) data.value(), Schema.class);
-
-                schemaRegistryListener.onSchema(schema);
-            } catch (JsonProcessingException e) {
-                log.error(e.getMessage(), e);
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
-    @Override
-    public void onMessage(ConsumerRecord<Object, Object> data, Acknowledgment acknowledgment) {
-        log.info("onMessage {} {}", data, acknowledgment);
-    }
-
-    @Override
-    public void onMessage(ConsumerRecord<Object, Object> data, Consumer<?, ?> consumer) {
-        log.info("onMessage {} {}", data, consumer);
-    }
-
-    @Override
-    public void onMessage(ConsumerRecord<Object, Object> data, Acknowledgment acknowledgment, Consumer<?, ?> consumer) {
-        log.info("onMessage {} {}", data, acknowledgment, consumer);
     }
 }
