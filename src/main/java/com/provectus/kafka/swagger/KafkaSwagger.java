@@ -113,7 +113,7 @@ public class KafkaSwagger {
         try {
             swaggerYaml = mapper.writeValueAsString(swagger);
         } catch (JsonProcessingException e) {
-            log.error("Unable to build swaggerSpec: " + e.getMessage());
+            log.error("Unable to buildKeyValue swaggerSpec: " + e.getMessage());
             throw new RuntimeException(e.getMessage(), e);
         }
     }
