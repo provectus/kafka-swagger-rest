@@ -18,15 +18,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Service
 public class KafkaSwaggerServiceImpl implements KafkaSwaggerService {
 
     private final KafkaSchemaRegistryRestClient kafkaSchemaRegistryRestClient;
 
     private Map<String, KafkaSwagger> kafkaSwaggerMap = new HashMap<>();
 
-    public KafkaSwaggerServiceImpl() {
+    public KafkaSwaggerServiceImpl(KafkaSwaggerConfig kafkaSwaggerConfig) {
         kafkaSchemaRegistryRestClient = new KafkaSchemaRegistryRestClientImpl(KafkaSchemaRegistryConfig.builder().url("http://localhost:8081").build());
+        this.registerKafka(kafkaSwaggerConfig);
     }
 
     @Override

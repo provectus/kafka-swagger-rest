@@ -1,4 +1,4 @@
-package com.provectus.kafka.swagger.сonfig;
+package com.provectus.kafka.swagger.config;
 
 import com.provectus.kafka.service.KafkaSwaggerService;
 import lombok.RequiredArgsConstructor;

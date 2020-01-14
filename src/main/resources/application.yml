@@ -10,3 +10,9 @@ spring:
       bootstrap-servers: localhost:9092
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+app:
+  kafka:
+    groupName: test
+    kafkaUrl: localhost:9092
+    kafkaSchemaRegistryUrl: http://localhost:8081

@@ -6,18 +6,14 @@ import com.provectus.kafka.model.schema.TopicParamSchema;
 import com.provectus.kafka.model.schema.TopicSwaggerSchema;
 import io.swagger.models.*;
 import io.swagger.models.parameters.BodyParameter;
-import io.swagger.models.properties.IntegerProperty;
-import io.swagger.models.properties.ObjectProperty;
-import io.swagger.models.properties.Property;
-import io.swagger.models.properties.StringProperty;
+import io.swagger.models.properties.*;
 import org.apache.avro.Schema;
 
 import java.util.List;
 
 public class KafkaSwaggerBuilder {
 
-    Swagger swagger = new Swagger();
-
+    private Swagger swagger = new Swagger();
     private KafkaSwaggerConfig kafkaSwaggerConfig;
 
     public Swagger build(KafkaSwaggerConfig kafkaSwaggerConfig, KafkaSwaggerSchema kafkaSwaggerSchema) {
@@ -41,32 +37,60 @@ public class KafkaSwaggerBuilder {
                 .consumes("application/json")
                 .produces("application/json");
 
+        swagger.addDefinition("ProducerResult", producerResult());
+
         return this;
+    }
+
+    private Model producerResult() {
+        return new ModelImpl()
+                .type("object")
+                .property("offset", new LongProperty())
+                .property("timestamp", new LongProperty())
+                .property("serializedKeySize", new LongProperty())
+                .property("serializedValueSize", new LongProperty())
+                .property("partition", new IntegerProperty())
+                .property("topic", new StringProperty());
     }
 
     private KafkaSwaggerBuilder topicApi(TopicSwaggerSchema topicSwaggerSchema) {
         String modelName = topicSwaggerSchema.getTopic() + "Model";
+        String modelNameKeyValue = modelName + "KeyValue";
+        String topicPathKeyValue = "/kafka/" + kafkaSwaggerConfig.getGroupName() + "/topics/kv/" + topicSwaggerSchema.getTopic();
         String topicPath = "/kafka/" + kafkaSwaggerConfig.getGroupName() + "/topics/" + topicSwaggerSchema.getTopic();
 
-        swagger.path(topicPath,
-                new Path().post(
-                        new Operation()
-                                .tag("/kafka/" + kafkaSwaggerConfig.getGroupName())
-                                .operationId("post" + topicSwaggerSchema.getTopic())
-                                .consumes("application/json")
-                                .parameter(new BodyParameter()
-                                        .name("message")
-                                        .description("message")
-                                        .schema(new RefModel(modelName)))
-                                .response(200, new Response()
-                                        .description("OK"))
-                ));
+        Operation op = new Operation()
+                .tag("/kafka/" + kafkaSwaggerConfig.getGroupName())
+                .operationId("post" + topicSwaggerSchema.getTopic())
+                .consumes("application/json")
+                .parameter(new BodyParameter()
+                        .name("message")
+                        .description("message")
+                        .schema(new RefModel(modelName)))
+                .response(200, new Response()
+                        .description("OK").responseSchema(new RefModel("ProducerResult")));
 
-        swagger.addDefinition(modelName,
+        Operation opKeyValue = new Operation()
+                .tags(op.getTags())
+                .operationId("post" + topicSwaggerSchema.getTopic()+"KeyValue")
+                .consumes(op.getConsumes())
+                .parameter(new BodyParameter()
+                        .name("message")
+                        .description("message")
+                        .schema(new RefModel(modelNameKeyValue)));
+        opKeyValue.setResponses(op.getResponses());
+
+
+        swagger.path(topicPath, new Path().post(op));
+        swagger.addDefinition(modelName, model(topicSwaggerSchema.getValueSchema()));
+        swagger.path(topicPathKeyValue, new Path().post(opKeyValue));
+        swagger.addDefinition(modelNameKeyValue,
                 new ModelImpl()
                         .type("object")
                         .property("key", property(topicSwaggerSchema.getKeySchema()))
-                        .property("value", property(topicSwaggerSchema.getValueSchema())));
+                        .property("value", new RefProperty(modelName)));
+
+
 
         return this;
     }
@@ -82,30 +106,67 @@ public class KafkaSwaggerBuilder {
         }
     }
 
+    private Model model(TopicParamSchema topicParamSchema) {
+        switch (topicParamSchema.getType()) {
+            case STRING:
+                return new ModelImpl().type("string");
+            case AVRO:
+                return avroModel(topicParamSchema.getAvroSchema().getAvroSchema());
+            default:
+                throw new RuntimeException("Unknown TopicParamSchema type: " + topicParamSchema.getType());
+        }
+    }
+
+    private Model avroModel(Schema avroSchema) {
+        List<Schema.Field> fields = avroSchema.getFields();
+        ModelImpl model = new ModelImpl();
+        for (Schema.Field field : fields) {
+            model.property(field.name(), fieldProperty(field.schema()));
+        }
+        return model;
+    }
+
     private Property avroProperty(Schema avroSchema) {
         if (avroSchema.getType() == Schema.Type.RECORD) {
             List<Schema.Field> fields = avroSchema.getFields();
             ObjectProperty objectProperty = new ObjectProperty();
-            fields.stream()
-                    .forEach(field -> objectProperty.property(field.name(), fieldProperty(field)));
+            for (Schema.Field field : fields) {
+                objectProperty.property(field.name(), fieldProperty(field.schema()));
+            }
             return objectProperty;
+        } else {
+            return fieldProperty(avroSchema);
         }
-
-        return stringProperty();
     }
 
-    private Property fieldProperty(Schema.Field field) {
-        //TODO: handle types ENUM, ARRAY, MAP, UNION, FIXED, BOOLEAN, NULL;
+    private Property fieldProperty(Schema schema) {
+        //TODO: handle types MAP?, UNION, FIXED?, NULL;
 
-        switch(field.schema().getType()) {
+        switch(schema.getType()) {
             case STRING:
                 return stringProperty();
             case INT:
+                return new IntegerProperty();
+            case FIXED:
+                return new LongProperty();
             case LONG:
+                return new LongProperty();
             case FLOAT:
+                return new FloatProperty();
             case BYTES:
+                return stringProperty();
             case DOUBLE:
-                return new IntegerProperty()._default(0);
+                return new DoubleProperty();
+            case RECORD:
+                return avroProperty(schema);
+            case ARRAY:
+                return new ArrayProperty(fieldProperty(schema.getElementType()));
+            case BOOLEAN:
+                return new BooleanProperty();
+            case ENUM:
+                return stringProperty()._enum(schema.getEnumSymbols());
+            case MAP:
+                return new MapProperty(fieldProperty(schema.getValueType()));
         }
         return stringProperty();
     }

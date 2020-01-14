@@ -1,4 +1,4 @@
-package com.provectus.kafka.swagger.сonfig;
+package com.provectus.kafka.swagger.config;
 
 import com.provectus.kafka.service.KafkaSwaggerService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,6 @@ import org.yaml.snakeyaml.reader.UnicodeReader;
 import springfox.documentation.annotations.ApiIgnore;
 import springfox.documentation.swagger.web.*;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.HashMap;
