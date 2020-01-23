@@ -22,8 +22,6 @@ class KafkaRecordBuilderTest {
 
     @Test
     public void simpleSchemaTest() throws Exception {
-
-
         Schema valueRaw = SchemaBuilder
                 .record("Employee").namespace("org.apache.avro.ipc")
                         .fields()
@@ -39,7 +37,6 @@ class KafkaRecordBuilderTest {
 
         TopicSwaggerSchema swaggerSchema = new TopicSwaggerSchema("test", keyTopicParamSchema, valueTopicParamSchema);
 
-
         ObjectNode kv = om.createObjectNode();
         kv.put("key", UUID.randomUUID().toString());
         ObjectNode valueNode = kv.putObject("value");
@@ -49,11 +46,8 @@ class KafkaRecordBuilderTest {
         ArrayNode emails = valueNode.putArray("emails");
         emails.add("info@test.com");
 
-
         Map.Entry<Object, Object> build = new KafkaRecordBuilder().buildKeyValue(swaggerSchema, kv);
 
         assertEquals(kv.get("key").asText(), build.getKey());
     }
-
-
 }

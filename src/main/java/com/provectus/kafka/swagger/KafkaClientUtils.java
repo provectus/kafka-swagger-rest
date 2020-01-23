@@ -21,42 +21,14 @@ public class KafkaClientUtils {
     public static KafkaMessageListenerContainer<Integer, String> createContainer(
             KafkaSwaggerConfig config,
             ContainerProperties containerProps) {
-        Map<String, Object> props = consumerProps(config.getKafkaUrl(), config.getKafkaSchemaRegistryUrl());
-        DefaultKafkaConsumerFactory<Integer, String> cf = new DefaultKafkaConsumerFactory<>(props);
+        DefaultKafkaConsumerFactory<Integer, String> cf = new DefaultKafkaConsumerFactory<>(config.getConsumerConfig());
         KafkaMessageListenerContainer<Integer, String> container = new KafkaMessageListenerContainer<>(cf, containerProps);
         return container;
     }
 
     public static KafkaTemplate<Object, Object> createTemplate(KafkaSwaggerConfig config) {
-        Map<String, Object> senderProps = senderProps(config.getKafkaUrl(), config.getKafkaSchemaRegistryUrl());
-        ProducerFactory<Object, Object> pf = new DefaultKafkaProducerFactory<>(senderProps);
+        ProducerFactory<Object, Object> pf = new DefaultKafkaProducerFactory<>(config.getProducerConfig());
         KafkaTemplate<Object, Object> template = new KafkaTemplate<>(pf);
         return template;
-    }
-
-    public static Map<String, Object> consumerProps(String kafkaUrl, String kafkaSchemaRegistryUrl) {
-        Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaUrl);
-        props.put("schema.registry.url", kafkaSchemaRegistryUrl);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "kafka-swagger-api");
-        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
-        props.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "100");
-        props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "15000");
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        return props;
-    }
-
-    public static Map<String, Object> senderProps(String kafkaUrl, String kafkaSchemaRegistryUrl) {
-        Map<String, Object> props = new HashMap<>();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaUrl);
-        props.put("schema.registry.url", kafkaSchemaRegistryUrl);
-        props.put(ProducerConfig.RETRIES_CONFIG, 0);
-        props.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
-        props.put(ProducerConfig.LINGER_MS_CONFIG, 1);
-        props.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 33554432);
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
-        return props;
     }
 }
