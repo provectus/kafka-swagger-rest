@@ -38,7 +38,7 @@ public class KafkaSwaggerClient {
 
     private void initKafkaListenerContainer() {
         ContainerProperties containerProps = new ContainerProperties("_schemas");
-        containerProps.setMessageListener(new MessageListener<Object, Object>(){
+        containerProps.setMessageListener(new MessageListener<>() {
 
             @Override
             public void onMessage(ConsumerRecord<Object, Object> data) {
@@ -82,7 +82,7 @@ public class KafkaSwaggerClient {
 
     public Set<String> getTopics() {
         Properties properties = new Properties();
-        properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaSwaggerConfig.getKafkaUrl());
 
         AdminClient adminClient = AdminClient.create(properties);
 

@@ -14,7 +14,7 @@
     <groupId>com.provectus.kafka</groupId>
     <artifactId>kafka-swagger-rest</artifactId>
     <version>0.1-SNAPSHOT</version>
-    <name>kafka-swagger</name>
+    <name>kafka-swagger-rest</name>
 
     <properties>
         <java.version>11</java.version>
@@ -25,6 +25,7 @@
         <confluent.version>5.0.0</confluent.version>
 
         <io.springfox.swagger.version>2.9.2</io.springfox.swagger.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <repositories>
@@ -150,4 +151,41 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <version>1.4.10</version>
+                <executions>
+                    <execution>
+                        <id>default</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                        <configuration>
+                            <tag>${project.version}-latest</tag>
+                            <repository>${project.artifactId}</repository>
+                            <buildArgs>
+                                <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
+                            </buildArgs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

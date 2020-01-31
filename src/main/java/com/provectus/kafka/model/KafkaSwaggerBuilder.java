@@ -90,8 +90,6 @@ public class KafkaSwaggerBuilder {
                         .property("key", property(topicSwaggerSchema.getKeySchema()))
                         .property("value", new RefProperty(modelName)));
 
-
-
         return this;
     }
 
@@ -109,7 +107,7 @@ public class KafkaSwaggerBuilder {
     private Model model(TopicParamSchema topicParamSchema) {
         switch (topicParamSchema.getType()) {
             case STRING:
-                return new ModelImpl().type("string");
+                return stringModel();
             case AVRO:
                 return avroModel(topicParamSchema.getAvroSchema().getAvroSchema());
             default:
@@ -118,12 +116,21 @@ public class KafkaSwaggerBuilder {
     }
 
     private Model avroModel(Schema avroSchema) {
-        List<Schema.Field> fields = avroSchema.getFields();
-        ModelImpl model = new ModelImpl();
-        for (Schema.Field field : fields) {
-            model.property(field.name(), fieldProperty(field.schema()));
+        if (avroSchema.getType() == Schema.Type.RECORD) {
+            List<Schema.Field> fields = avroSchema.getFields();
+            ModelImpl model = new ModelImpl();
+            for (Schema.Field field : fields) {
+                model.property(field.name(), fieldProperty(field.schema()));
+            }
+
+            return model;
         }
-        return model;
+
+        return stringModel();
+    }
+
+    private Model stringModel() {
+        return new ModelImpl().type("string");
     }
 
     private Property avroProperty(Schema avroSchema) {
@@ -134,9 +141,9 @@ public class KafkaSwaggerBuilder {
                 objectProperty.property(field.name(), fieldProperty(field.schema()));
             }
             return objectProperty;
-        } else {
-            return fieldProperty(avroSchema);
         }
+
+        return fieldProperty(avroSchema);
     }
 
     private Property fieldProperty(Schema schema) {

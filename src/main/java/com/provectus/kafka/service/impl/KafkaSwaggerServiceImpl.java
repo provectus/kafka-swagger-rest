@@ -1,15 +1,11 @@
 package com.provectus.kafka.service.impl;
 
-import com.provectus.kafka.schemaregistry.KafkaSchemaRegistryConfig;
-import com.provectus.kafka.schemaregistry.KafkaSchemaRegistryRestClient;
-import com.provectus.kafka.schemaregistry.impl.KafkaSchemaRegistryRestClientImpl;
 import com.provectus.kafka.swagger.KafkaSwagger;
 import com.provectus.kafka.model.config.KafkaSwaggerConfig;
 import com.provectus.kafka.model.schema.TopicSwaggerSchema;
 import com.provectus.kafka.service.KafkaSwaggerService;
 import io.swagger.models.Swagger;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,12 +16,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class KafkaSwaggerServiceImpl implements KafkaSwaggerService {
 
-    private final KafkaSchemaRegistryRestClient kafkaSchemaRegistryRestClient;
-
     private Map<String, KafkaSwagger> kafkaSwaggerMap = new HashMap<>();
 
     public KafkaSwaggerServiceImpl(KafkaSwaggerConfig kafkaSwaggerConfig) {
-        kafkaSchemaRegistryRestClient = new KafkaSchemaRegistryRestClientImpl(KafkaSchemaRegistryConfig.builder().url("http://localhost:8081").build());
         this.registerKafka(kafkaSwaggerConfig);
     }
 
