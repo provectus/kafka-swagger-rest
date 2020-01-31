@@ -80,9 +80,6 @@ public class KafkaSwagger {
     }
 
     private void syncSchema(Schema schema) {
-        AvroSchema avroSchema = schema.getAvroSchema();
-        org.apache.avro.Schema schema_ = avroSchema.getAvroSchema();
-
         String topic = schema.getTopic();
 
         if (topic == null) {

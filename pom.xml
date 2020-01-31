@@ -178,6 +178,7 @@
                         </goals>
                         <configuration>
                             <tag>${project.version}-latest</tag>
+                            <repository>${project.artifactId}</repository>
                             <buildArgs>
                                 <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
                             </buildArgs>
