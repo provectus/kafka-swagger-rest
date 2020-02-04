@@ -1,0 +1,5 @@
+swagger:
+  kafka:
+    - groupName: localhost
+      bootstrapServer: localhost:9092
+      schemaRegistryUrl: http://localhost:8081
