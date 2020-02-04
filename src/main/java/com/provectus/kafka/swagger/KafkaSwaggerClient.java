@@ -3,6 +3,7 @@ package com.provectus.kafka.swagger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.provectus.kafka.error.KafkaSwaggerException;
 import com.provectus.kafka.schemaregistry.SchemaRegistryListener;
 import com.provectus.kafka.schemaregistry.model.Schema;
 import com.provectus.kafka.model.config.KafkaSwaggerConfig;
@@ -12,6 +13,8 @@ import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.ListTopicsOptions;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.common.KafkaException;
+import org.springframework.http.HttpStatus;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.KafkaMessageListenerContainer;
 import org.springframework.kafka.listener.MessageListener;
@@ -72,27 +75,20 @@ public class KafkaSwaggerClient {
 
             @Override
             public void onMessage(ConsumerRecord<Object, Object> data, Acknowledgment acknowledgment, Consumer<?, ?> consumer) {
-                log.trace("onMessage {} {}", data, acknowledgment, consumer);
+                log.trace("onMessage {} {} {}", data, acknowledgment, consumer);
             }
         });
 
         kafkaMessageListenerContainer = KafkaClientUtils.createContainer(kafkaSwaggerConfig, containerProps);
-        kafkaMessageListenerContainer.start();
     }
 
     public Set<String> getTopics() {
-        Properties properties = new Properties();
-        properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaSwaggerConfig.getKafkaUrl());
-
-        AdminClient adminClient = AdminClient.create(properties);
-
-        ListTopicsOptions listTopicsOptions = new ListTopicsOptions();
-        listTopicsOptions.listInternal(true);
-
-        try {
-            return adminClient.listTopics(listTopicsOptions).names().get();
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
+        try (Consumer<Object, Object> kafkaConsumer = KafkaClientUtils.createConsumerFactory(kafkaSwaggerConfig)
+                .createConsumer()) {
+            return kafkaConsumer.listTopics().keySet();
+        } catch (KafkaException e) {
+            log.error("Error on load listTopics: {}. ", e.getMessage());
+            throw new KafkaSwaggerException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
 

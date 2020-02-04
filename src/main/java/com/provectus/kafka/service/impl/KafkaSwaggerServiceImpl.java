@@ -1,25 +1,44 @@
 package com.provectus.kafka.service.impl;
 
+import com.provectus.kafka.error.KafkaSwaggerException;
 import com.provectus.kafka.swagger.KafkaSwagger;
 import com.provectus.kafka.model.config.KafkaSwaggerConfig;
 import com.provectus.kafka.model.schema.TopicSwaggerSchema;
 import com.provectus.kafka.service.KafkaSwaggerService;
+import com.provectus.kafka.swagger.config.SwaggerProperties;
 import io.swagger.models.Swagger;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Service
 @Slf4j
+@RequiredArgsConstructor
 public class KafkaSwaggerServiceImpl implements KafkaSwaggerService {
+
+    @Autowired
+    private SwaggerProperties swaggerProperties;
 
     private Map<String, KafkaSwagger> kafkaSwaggerMap = new HashMap<>();
 
-    public KafkaSwaggerServiceImpl(KafkaSwaggerConfig kafkaSwaggerConfig) {
-        this.registerKafka(kafkaSwaggerConfig);
+    @PostConstruct
+    public void initKafkaFromConfiguration() {
+        log.info(swaggerProperties.toString());
+        for (KafkaSwaggerConfig kafkaSwaggerConfig: swaggerProperties.getKafka()) {
+            try {
+                registerKafka(kafkaSwaggerConfig);
+            } catch (KafkaSwaggerException e) {
+                log.error("Unable to register kafka swagger: {}. Error: {}", kafkaSwaggerConfig, e.getMessage());
+            }
+        }
     }
 
     @Override
@@ -46,6 +65,7 @@ public class KafkaSwaggerServiceImpl implements KafkaSwaggerService {
         KafkaSwagger kafkaSwagger = new KafkaSwagger(kafkaSwaggerConfig);
         kafkaSwagger.init();
         kafkaSwaggerMap.put(kafkaSwaggerConfig.getGroupName(), kafkaSwagger);
+        log.info("kafka-swagger registered with config: " + kafkaSwaggerConfig);
         return kafkaSwagger;
     }
 

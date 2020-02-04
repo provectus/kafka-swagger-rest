@@ -15,24 +15,24 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://kafka:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
   schema-registry:
     image: confluentinc/cp-schema-registry:5.1.0
-    ports:
-      - 8081:8081
     depends_on:
       - kafka
       - zookeeper
+    ports:
+      - 8081:8081
     environment:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: zookeeper:2181
       SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
 
-  kafka-swagger-api:
+  kafka-swagger-rest:
     image: kafka-swagger-rest:0.1-SNAPSHOT-latest
     ports:
       - 8080:8080
@@ -43,8 +43,7 @@ services:
     command: [ "java", "-Dreactor.netty.http.server.accessLogEnabled=true",
                "-jar", "/kafka-swagger-rest-0.1-SNAPSHOT.jar"]
     environment:
-      APP_KAFKA_GROUPNAME: 'test'
-      APP_KAFKA_KAFKAURL: 'kafka:29092'
-      APP_KAFKA_KAFKASCHEMAREGISTRYURL: 'http://host.docker.internal:8081'
-
-
+      swagger_kafka[0]_groupName: 'localhost-kafka'
+      swagger_kafka[0]_bootstrapServer: 'kafka:29092'
+      swagger_kafka[0]_schemaRegistryUrl: 'http://host.docker.internal:8081'
+      swagger_kafka[0]_consumerConfig_"[default.api.timeout.ms]": '15000'
