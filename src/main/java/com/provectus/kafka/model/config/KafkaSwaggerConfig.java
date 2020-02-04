@@ -13,13 +13,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+@ToString
 @Builder(toBuilder = true)
 @AllArgsConstructor
 public class KafkaSwaggerConfig {
 
     private String groupName;
-    private String kafkaUrl;
-    private String kafkaSchemaRegistryUrl;
+    private String bootstrapServer;
+    private String schemaRegistryUrl;
     private Map<String, Object> consumerConfig = new HashMap<>();
     private Map<String, Object> producerConfig = new HashMap<>();
 
@@ -35,6 +36,7 @@ public class KafkaSwaggerConfig {
         consumerConfig.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
         consumerConfig.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "100");
         consumerConfig.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "15000");
+        consumerConfig.put(ConsumerConfig.DEFAULT_API_TIMEOUT_MS_CONFIG, "5000");
         consumerConfig.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         consumerConfig.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
     }
@@ -56,26 +58,26 @@ public class KafkaSwaggerConfig {
         this.groupName = groupName;
     }
 
-    public String getKafkaUrl() {
-        return kafkaUrl;
+    public String getBootstrapServer() {
+        return bootstrapServer;
     }
 
-    public void setKafkaUrl(String kafkaUrl) {
-        producerConfig.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaUrl);
-        consumerConfig.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaUrl);
+    public void setBootstrapServer(String bootstrapServer) {
+        producerConfig.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
+        consumerConfig.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
 
-        this.kafkaUrl = kafkaUrl;
+        this.bootstrapServer = bootstrapServer;
     }
 
-    public String getKafkaSchemaRegistryUrl() {
-        return kafkaSchemaRegistryUrl;
+    public String getSchemaRegistryUrl() {
+        return schemaRegistryUrl;
     }
 
-    public void setKafkaSchemaRegistryUrl(String kafkaSchemaRegistryUrl) {
-        consumerConfig.put("schema.registry.url", kafkaSchemaRegistryUrl);
-        producerConfig.put("schema.registry.url", kafkaSchemaRegistryUrl);
+    public void setSchemaRegistryUrl(String schemaRegistryUrl) {
+        consumerConfig.put("schema.registry.url", schemaRegistryUrl);
+        producerConfig.put("schema.registry.url", schemaRegistryUrl);
 
-        this.kafkaSchemaRegistryUrl = kafkaSchemaRegistryUrl;
+        this.schemaRegistryUrl = schemaRegistryUrl;
     }
 
     public Map<String, Object> getConsumerConfig() {
@@ -104,7 +106,7 @@ public class KafkaSwaggerConfig {
 
     public KafkaSchemaRegistryConfig schemaRegistryConfig() {
         return KafkaSchemaRegistryConfig.builder()
-                .url(kafkaSchemaRegistryUrl)
+                .url(schemaRegistryUrl)
                 .build();
     }
 

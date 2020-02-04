@@ -4,6 +4,7 @@ import com.provectus.kafka.schemaregistry.KafkaSchemaRegistryConfig;
 import com.provectus.kafka.schemaregistry.KafkaSchemaRegistryRestClient;
 import com.provectus.kafka.schemaregistry.model.Schema;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
@@ -15,7 +16,11 @@ public class KafkaSchemaRegistryRestClientImpl implements KafkaSchemaRegistryRes
     private final RestTemplate restTemplate;
 
     public KafkaSchemaRegistryRestClientImpl(KafkaSchemaRegistryConfig config) {
-        restTemplate = new RestTemplate();
+        SimpleClientHttpRequestFactory rf = new SimpleClientHttpRequestFactory();
+        rf.setReadTimeout(60000);
+        rf.setConnectTimeout(60000);
+
+        restTemplate = new RestTemplate(rf);
         restTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory(config.getUrl()));
     }
 

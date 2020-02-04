@@ -1,12 +1,14 @@
 version: '2'
 services:
-  kafka-swagger-api:
+  kafka-swagger-rest:
     image: kafka-swagger-rest:0.1-SNAPSHOT-latest
     ports:
       - 8080:8080
     command: [ "java", "-Dreactor.netty.http.server.accessLogEnabled=true",
                "-jar", "/kafka-swagger-rest-0.1-SNAPSHOT.jar"]
     environment:
-      APP_KAFKA_GROUPNAME: 'test'
-      APP_KAFKA_KAFKAURL: 'kafka:29092'
-      APP_KAFKA_KAFKASCHEMAREGISTRYURL: 'http://host.docker.internal:8081'
+      server.port: '8080'
+
+      swagger_kafka[0]_groupName: 'localhost-kafka'
+      swagger_kafka[0]_bootstrapServer: 'kafka:29092'
+      swagger_kafka[0]_schemaRegistryUrl: 'http://host.docker.internal:8081'

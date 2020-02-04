@@ -30,7 +30,7 @@ public class KafkaSwaggerBuilder {
     private KafkaSwaggerBuilder kafkaInfo(String tag) {
         swagger.info(
                 new Info()
-                        .title("localhost kafka swagger")
+                        .title(tag + " kafka swagger")
                         .version("1.0"))
                 .basePath("/")
                 .tag(new Tag().name(tag))
