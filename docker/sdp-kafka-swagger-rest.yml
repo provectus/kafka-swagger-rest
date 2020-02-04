@@ -10,5 +10,5 @@ services:
       swagger_kafka[0]_groupName: 'sdp-kafka'
       swagger_kafka[0]_bootstrapServer: 'kafka1.public-sdp-kafka.squadex.devopskzn.ru:9092'
       swagger_kafka[0]_schemaRegistryUrl: 'http://schema-registry.sdp-kafka.squadex.devopskzn.ru'
-      swagger_kafka[0]_consumerConfig_"[security.protocol]": 'value1'
-      swagger_kafka[0]_producerConfig_"[security.protocol]": 'value11'
+      swagger_kafka[0]_consumerConfig_"[security.protocol]": 'SSL'
+      swagger_kafka[0]_producerConfig_"[security.protocol]": 'SSL'
