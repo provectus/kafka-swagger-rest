@@ -7,8 +7,10 @@ services:
     command: [ "java", "-Dreactor.netty.http.server.accessLogEnabled=true",
                "-jar", "/kafka-swagger-rest-0.1-SNAPSHOT.jar"]
     environment:
-      swagger.kafka[0].groupName: 'sdp-kafka'
-      swagger.kafka[0].bootstrapServers: 'kafka1.public-sdp-kafka.squadex.devopskzn.ru:9092'
-      swagger.kafka[0].schemaRegistryUrl: 'http://schema-registry.sdp-kafka.squadex.devopskzn.ru'
-      swagger.kafka[0].consumerConfig."[security.protocol]": 'SSL'
-      swagger.kafka[0].producerConfig."[security.protocol]": 'SSL'
+      swagger_kafka_0_groupName: 'sdp-kafka'
+      swagger_kafka_0_bootstrapServers: 'kafka1.public-sdp-kafka.squadex.devopskzn.ru:9092'
+      swagger_kafka_0_schemaRegistryUrl: 'http://schema-registry.sdp-kafka.squadex.devopskzn.ru'
+      swagger_kafka_0_consumerConfig_security_protocol: 'SSL'
+      swagger_kafka_0_producerConfig_security_protocol: 'SSL'
+
+      swagger_kafka_0_ignoreTopics: 'kafka-connect-cp-kafka-connect-config, kafka-connect-cp-kafka-connect-offset, kafka-connect-cp-kafka-connect-status'

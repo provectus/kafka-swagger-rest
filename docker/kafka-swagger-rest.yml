@@ -7,18 +7,18 @@ services:
     command: [ "java", "-Dreactor.netty.http.server.accessLogEnabled=true",
                "-jar", "/kafka-swagger-rest-0.1-SNAPSHOT.jar"]
     environment:
-      server.port: '8080'
+      server_port: '8080'
 
-      swagger.kafka[0].groupName: 'localhost-kafka'
-      swagger.kafka[0].bootstrapServers: 'kafka:29092'
-      swagger.kafka[0].schemaRegistryUrl: 'http://host.docker.internal:8081'
+      swagger_kafka_0_groupName: 'localhost-kafka'
+      swagger_kafka_0_bootstrapServers: 'kafka:29092'
+      swagger_kafka_0_schemaRegistryUrl: 'http://host.docker.internal:8081'
 
-      swagger.kafka[0].consumerConfig."[enable.auto.commit]": 'true'
-      swagger.kafka[0].consumerConfig."[auto.commit.interval.ms]": '100'
-      swagger.kafka[0].consumerConfig."[session.timeout.ms]": '15000'
-      swagger.kafka[0].consumerConfig."[default.api.timeout.ms]": '5000'
+      swagger_kafka_0_consumerConfig_enable_auto_commit: 'true'
+      swagger_kafka_0_consumerConfig_auto_commit_interval_ms: '100'
+      swagger_kafka_0_consumerConfig_session_timeout_ms: '15000'
+      swagger_kafka_0_consumerConfig_default_api_timeout_ms: '5000'
 
-      swagger.kafka[0].producerConfig."[retries]": '0'
-      swagger.kafka[0].producerConfig."[batch.size]": '16384'
-      swagger.kafka[0].producerConfig."[linger.ms]": '1'
-      swagger.kafka[0].producerConfig."[buffer.memory]": '33554432'
+      swagger_kafka_0_producerConfig_retries: '0'
+      swagger_kafka_0_producerConfig_batch_size: '16384'
+      swagger_kafka_0_producerConfig_linger_ms: '1'
+      swagger_kafka_0_producerConfig_buffer_memory: '33554432'

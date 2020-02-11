@@ -6,6 +6,7 @@ Supports 2 types of message format for topic:
 - avro
 
 ## Configuration
+
 Docker compose example:
 
     version: '2'
@@ -31,6 +32,36 @@ Docker compose example:
           
           swagger.kafka[0].topicConfig[0].topicName: 'users-avro2'
           swagger.kafka[0].topicConfig[0].autofillKeyParamName: 'ID'
+          
+          swagger.kafka[0].ignoreTopics: 'topicA, topicB, topicC'
+
+Another example docker compose:
+
+    version: '2'
+    services:
+      kafka-swagger-rest:
+        image: kafka-swagger-rest:0.1-SNAPSHOT-latest
+        ports:
+          - 8080:8080
+        command: [ "java", "-Dreactor.netty.http.server.accessLogEnabled=true",
+                   "-jar", "/kafka-swagger-rest-0.1-SNAPSHOT.jar"]
+        environment:
+          server.port: '8080'
+    
+          swagger_kafka_0_groupName: 'localhost-kafka'
+          swagger_kafka_0_bootstrapServers: 'kafka:29092'
+          swagger_kafka_0_schemaRegistryUrl: 'http://host.docker.internal:8081'
+    
+          swagger_kafka_0_consumerConfig_enable_auto_commit: 'true'
+          swagger_kafka_0_consumerConfig_auto_commit_interval_ms": '100'
+    
+          swagger_kafka_0_producerConfig_retries: '0'
+          swagger_kafka_0_producerConfig_batch_size: '16384'
+
+          swagger_kafka_0_topicConfig_0_topicName: 'users-avro2'
+          swagger_kafka_0_topicConfig_0_autofillKeyParamName: 'ID'
+          
+          swagger_kafka_0_ignoreTopics: 'topicA, topicB, topicC'
 
 
 | key | description |

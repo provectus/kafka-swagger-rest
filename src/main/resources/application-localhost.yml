@@ -4,11 +4,12 @@ swagger:
       bootstrapServers: localhost:9092
       schemaRegistryUrl: http://host.docker.internal:8081
       consumerConfig:
-        "[group.id]": 'kafka-swagger-rest'
-        "[enable.auto.commit]": 'true'
-        "[auto.commit.interval.ms]": '200'
-        "[session.timeout.ms]": '10000'
-        "[default.api.timeout.ms]": '10000'
+        group.id: 'kafka-swagger-rest'
+        enable.auto.commit: 'true'
+        auto.commit.interval.ms: '200'
+        session.timeout.ms: '10000'
+        default.api.timeout.ms: '10000'
       topicConfig:
         - topicName: 'users-avro2'
           autofillKeyParamName: 'name'
+      ignoreTopics: test

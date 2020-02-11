@@ -30,7 +30,7 @@ public class KafkaSwaggerConfig {
     }
 
     private void initConsumerConfig() {
-        consumerConfig.putIfAbsent(ConsumerConfig.GROUP_ID_CONFIG, "kafka-swagger-api");
+        consumerConfig.putIfAbsent(ConsumerConfig.GROUP_ID_CONFIG, "kafka-swagger-rest");
         consumerConfig.putIfAbsent(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
         consumerConfig.putIfAbsent(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "100");
         consumerConfig.putIfAbsent(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "15000");
@@ -83,7 +83,7 @@ public class KafkaSwaggerConfig {
     }
 
     public void setConsumerConfig(Map<String, Object> consumerConfig) {
-        this.consumerConfig = consumerConfig;
+        this.consumerConfig = MapParameters.mergeMapParams(consumerConfig);
     }
 
     public Map<String, Object> getProducerConfig() {
@@ -91,7 +91,7 @@ public class KafkaSwaggerConfig {
     }
 
     public void setProducerConfig(Map<String, Object> producerConfig) {
-        this.producerConfig = producerConfig;
+        this.producerConfig = MapParameters.mergeMapParams(producerConfig);
     }
 
     public Set<String> getIgnoreTopics() {
@@ -124,17 +124,5 @@ public class KafkaSwaggerConfig {
         if (configOptional.isPresent()) return configOptional.get();
 
         return null;
-    }
-
-    public static class KafkaSwaggerConfigBuilder {
-        public KafkaSwaggerConfigBuilder producerConfigParam(String key, Object value) {
-            this.producerConfig.put(key, value);
-            return this;
-        }
-
-        public KafkaSwaggerConfigBuilder consumerConfigParam(String key, Object value) {
-            this.consumerConfig.put(key, value);
-            return this;
-        }
     }
 }

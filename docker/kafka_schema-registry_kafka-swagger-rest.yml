@@ -43,6 +43,6 @@ services:
     command: [ "java", "-Dreactor.netty.http.server.accessLogEnabled=true",
                "-jar", "/kafka-swagger-rest-0.1-SNAPSHOT.jar"]
     environment:
-      swagger.kafka[0].groupName: 'localhost-kafka'
-      swagger.kafka[0].bootstrapServers: 'kafka:29092'
-      swagger.kafka[0].schemaRegistryUrl: 'http://host.docker.internal:8081'
+      swagger_kafka_0_groupName: 'localhost-kafka'
+      swagger_kafka_0_bootstrapServers: 'kafka:29092'
+      swagger_kafka_0_schemaRegistryUrl: 'http://host.docker.internal:8081'
