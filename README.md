@@ -39,8 +39,8 @@ Docker compose example:
 | swagger_kafka[0]_bootstrapServers | kafka bootstrapServers |
 | swagger_kafka[0]_schemaRegistryUrl | url to kafka-schema-registry |
 | --- | --- |
-| swagger.kafka[0].consumerConfig.* | Group of configs for consumer. Consumer is used to read message schemas from kafka topic '_schemas'. http://kafka.apache.org/documentation.html#consumerconfigs - here you can find all config keys for consumer config |
-| swagger.kafka[0].producerConfig.* | group of configs for producer. Producer is uder to send data into kafka topics. http://kafka.apache.org/documentation.html#producerconfigs - here you can find all config keys for producer config |  
+| swagger.kafka[0].consumerConfig.* | Group of configs for consumer. Consumer is used to read schemas from kafka topic '_schemas'. http://kafka.apache.org/documentation.html#consumerconfigs - here you can find all config keys for consumer config |
+| swagger.kafka[0].producerConfig.* | Group of configs for producer. Producer is used to send data into kafka topics. http://kafka.apache.org/documentation.html#producerconfigs - here you can find all config keys for producer config |  
 | --- | --- |
 | swagger.kafka[0].topicConfig[0] | Topic Config |
 | swagger.kafka[0].topicConfig[0].topicName | Topic Name |
