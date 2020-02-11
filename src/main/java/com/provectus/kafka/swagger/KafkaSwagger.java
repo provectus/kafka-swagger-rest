@@ -12,6 +12,8 @@ import com.provectus.kafka.schemaregistry.model.Schema;
 import com.provectus.kafka.model.config.KafkaSwaggerConfig;
 import com.provectus.kafka.model.schema.KafkaSwaggerSchema;
 import com.provectus.kafka.model.schema.TopicSwaggerSchema;
+import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
+import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import io.swagger.models.Swagger;
 import lombok.extern.slf4j.Slf4j;
 import java.util.*;
@@ -50,6 +52,7 @@ public class KafkaSwagger {
     }
 
     private void initKafkaSchema() {
+        kafkaSchemaRegistryRestClient.waitIsReady();
         kafkaSwaggerSchema = new KafkaSwaggerSchema();
 
         List<String> topics = kafkaSwaggerClient.getTopics().stream()
@@ -58,7 +61,7 @@ public class KafkaSwagger {
 
         topics.stream()
                 .filter(topic -> !config.getIgnoreTopics().contains(topic))
-                .forEach(kafkaSwaggerSchema::addDefaultTopicSchema);
+                .forEach(topic1 -> kafkaSwaggerSchema.addDefaultTopicSchema(topic1, config.getAutofillTopicConfig(topic1)));
 
         initTopicsSchemas(topics);
         rebuildSwaggerDocumentation();
@@ -92,7 +95,7 @@ public class KafkaSwagger {
         TopicSwaggerSchema topicSwaggerSchema = kafkaSwaggerSchema.getTopics().get(topic);
 
         if (topicSwaggerSchema == null) {
-            kafkaSwaggerSchema.addDefaultTopicSchema(topic);
+            kafkaSwaggerSchema.addDefaultTopicSchema(topic, config.getAutofillTopicConfig(topic));
         }
 
         kafkaSwaggerSchema.updateSchema(topic, schema);

@@ -28,6 +28,15 @@ public class KafkaRecordBuilder {
         return new AbstractMap.SimpleEntry<>(key, value);
     }
 
+    public Map.Entry<Object, Object> buildAutofillKeyValue(TopicSwaggerSchema topicSwaggerSchema, JsonNode jsonNode) throws Exception {
+        String autofillKeyParam = topicSwaggerSchema.getAutofillTopicConfig().getAutofillKeyParamName();
+
+        Object key = getObject(jsonNode, autofillKeyParam, topicSwaggerSchema.getKeySchema());
+        Object value = getObject(jsonNode, Optional.empty(), topicSwaggerSchema.getValueSchema());
+
+        return new AbstractMap.SimpleEntry<>(key, value);
+    }
+
     public Object buildValue(TopicSwaggerSchema topicSwaggerSchema, JsonNode jsonNode) throws Exception {
         return getObject(jsonNode, Optional.empty(), topicSwaggerSchema.getValueSchema());
     }
@@ -45,6 +54,7 @@ public class KafkaRecordBuilder {
             case AVRO:
                 return parseJson(node.toString(), schema.getAvroSchema().getAvroSchema());
         }
+
         return null;
     }
 
@@ -56,5 +66,4 @@ public class KafkaRecordBuilder {
         Decoder decoder = DecoderFactory.get().jsonDecoder(schema, din);
         return reader.read(null, decoder);
     }
-
 }

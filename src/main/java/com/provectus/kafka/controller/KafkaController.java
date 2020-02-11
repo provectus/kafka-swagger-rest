@@ -69,8 +69,13 @@ public class KafkaController {
 
     private Mono<Map.Entry<Object, Object>> buildValue(JsonNode node, TopicSwaggerSchema schema) {
         try {
-            Object data = new KafkaRecordBuilder().buildValue(schema, node);
-            return Mono.just(new AbstractMap.SimpleEntry<>(null, data));
+            if (schema.getAutofillTopicConfig() != null) {
+                Map.Entry<Object, Object> data = new KafkaRecordBuilder().buildAutofillKeyValue(schema, node);
+                return Mono.just(data);
+            } else {
+                Object data = new KafkaRecordBuilder().buildValue(schema, node);
+                return Mono.just(new AbstractMap.SimpleEntry<>(null, data));
+            }
         } catch (Exception e) {
             return Mono.error(e);
         }

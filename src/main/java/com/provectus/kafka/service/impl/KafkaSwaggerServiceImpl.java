@@ -10,6 +10,12 @@ import io.swagger.models.Swagger;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.env.OriginTrackedMapPropertySource;
+import org.springframework.boot.web.reactive.context.StandardReactiveWebEnvironment;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.MapPropertySource;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertySource;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -83,6 +89,7 @@ public class KafkaSwaggerServiceImpl implements KafkaSwaggerService {
     public KafkaSwagger getKafkaSwagger(String group) {
         return kafkaSwaggerMap.get(group);
     }
+
     @Override
     public String getSwaggerSpec(String kafkaGroupName) {
         return kafkaSwaggerMap.get(kafkaGroupName).getSwaggerYaml();

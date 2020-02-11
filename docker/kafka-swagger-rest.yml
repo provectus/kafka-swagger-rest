@@ -9,6 +9,16 @@ services:
     environment:
       server.port: '8080'
 
-      swagger_kafka[0]_groupName: 'localhost-kafka'
-      swagger_kafka[0]_bootstrapServer: 'kafka:29092'
-      swagger_kafka[0]_schemaRegistryUrl: 'http://host.docker.internal:8081'
+      swagger.kafka[0].groupName: 'localhost-kafka'
+      swagger.kafka[0].bootstrapServers: 'kafka:29092'
+      swagger.kafka[0].schemaRegistryUrl: 'http://host.docker.internal:8081'
+
+      swagger.kafka[0].consumerConfig."[enable.auto.commit]": 'true'
+      swagger.kafka[0].consumerConfig."[auto.commit.interval.ms]": '100'
+      swagger.kafka[0].consumerConfig."[session.timeout.ms]": '15000'
+      swagger.kafka[0].consumerConfig."[default.api.timeout.ms]": '5000'
+
+      swagger.kafka[0].producerConfig."[retries]": '0'
+      swagger.kafka[0].producerConfig."[batch.size]": '16384'
+      swagger.kafka[0].producerConfig."[linger.ms]": '1'
+      swagger.kafka[0].producerConfig."[buffer.memory]": '33554432'

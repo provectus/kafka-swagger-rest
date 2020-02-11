@@ -13,4 +13,8 @@ public interface KafkaSchemaRegistryRestClient {
     Schema getSubjectSchema(String subject, Integer version);
 
     Schema getSubjectLatestSchema(String subject);
+
+    void waitIsReady(Integer timeout);
+
+    void waitIsReady();
 }
