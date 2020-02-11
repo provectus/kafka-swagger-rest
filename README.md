@@ -53,6 +53,9 @@ Required:
 
 
     run ./mvnw clean install
+    
+Build results:
+- docker image: kafka-swagger-rest:0.1-SNAPSHOT-latest
 
 ## Quick start in docker:
 
