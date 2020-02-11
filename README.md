@@ -44,7 +44,7 @@ Docker compose example:
 | --- | --- |
 | swagger.kafka[0].topicConfig[0] | Topic Config |
 | swagger.kafka[0].topicConfig[0].topicName | Topic Name |
-| swagger.kafka[0].topicConfig[0].autofillKeyParamName | ParamName to autofill Key from Value data. If your value data is "Avro" object that contains some fields and you want to autofill key from some field (like: ID) then you can set this param to "ID" and this field will be autofilled from ID value. |
+| swagger.kafka[0].topicConfig[0].autofillKeyParamName | ParamName to autofill Key from Value data. If topic message is Avro object and you want to autofill key from some field (like: ID) then you need to set this param value to "ID" and key value will be autofilled from "ID" |
 
 ## How to build
 Required:
