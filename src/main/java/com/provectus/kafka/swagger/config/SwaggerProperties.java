@@ -10,14 +10,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-@Component
 @ConfigurationProperties("swagger")
+@Component
 @Setter
 @Getter
 public class SwaggerProperties {
-
-    @Autowired
-    private Environment environment;
 
     private List<KafkaSwaggerConfig> kafka = new ArrayList<>();
 }

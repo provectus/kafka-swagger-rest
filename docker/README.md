@@ -1,4 +1,14 @@
 # Docker compose examples
+    
+    Run Kafka Server & Kafka Swagger Rest in one container
+    docker-compose -f kafka_schema-registry_kafka-swagger-rest.yml up
+        
+    Run Kafka Server & Kafka Swagger Rest in two containers
+    docker-compose -f kafka_schema-registry.yml up
+    docker-compose -f kafka-swagger-rest.yml up
+    
+    Run Kafka Swagger Rest that connects to SDP Kafka
+    docker-compose -f sdp-kafka-swagger-rest.yml up
 
 ## kafka_schema-registry_kafka-swagger-rest.yml:
 

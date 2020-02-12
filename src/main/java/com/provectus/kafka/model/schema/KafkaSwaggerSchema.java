@@ -1,6 +1,7 @@
 package com.provectus.kafka.model.schema;
 
 import com.fasterxml.jackson.dataformat.avro.AvroSchema;
+import com.provectus.kafka.model.config.TopicConfig;
 import com.provectus.kafka.schemaregistry.model.Schema;
 import lombok.*;
 
@@ -16,14 +17,21 @@ public class KafkaSwaggerSchema {
 
     private Map<String, TopicSwaggerSchema> topics = new HashMap<>();
 
-    public void addDefaultTopicSchema(String topic) {
+    public TopicSwaggerSchema addDefaultTopicSchema(String topic, TopicConfig autofillTopicConfig) {
         TopicSwaggerSchema topicSwaggerSchema = TopicSwaggerSchema.builder()
                 .topic(topic)
                 .keySchema(new TopicParamSchema(TopicParamSchemaType.STRING, null))
                 .valueSchema(new TopicParamSchema(TopicParamSchemaType.STRING, null))
+                .autofillTopicConfig(autofillTopicConfig)
                 .build();
 
         this.topics.put(topic, topicSwaggerSchema);
+
+        return topicSwaggerSchema;
+    }
+
+    public TopicSwaggerSchema addDefaultTopicSchema(String topic) {
+        return addDefaultTopicSchema(topic, null);
     }
 
     public boolean updateKeySchema(String topic, AvroSchema keySchema) {

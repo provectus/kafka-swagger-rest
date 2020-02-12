@@ -7,8 +7,18 @@ services:
     command: [ "java", "-Dreactor.netty.http.server.accessLogEnabled=true",
                "-jar", "/kafka-swagger-rest-0.1-SNAPSHOT.jar"]
     environment:
-      server.port: '8080'
+      server_port: '8080'
 
-      swagger_kafka[0]_groupName: 'localhost-kafka'
-      swagger_kafka[0]_bootstrapServer: 'kafka:29092'
-      swagger_kafka[0]_schemaRegistryUrl: 'http://host.docker.internal:8081'
+      swagger_kafka_0_groupName: 'localhost-kafka'
+      swagger_kafka_0_bootstrapServers: 'kafka:29092'
+      swagger_kafka_0_schemaRegistryUrl: 'http://host.docker.internal:8081'
+
+      swagger_kafka_0_consumerConfig_enable_auto_commit: 'true'
+      swagger_kafka_0_consumerConfig_auto_commit_interval_ms: '100'
+      swagger_kafka_0_consumerConfig_session_timeout_ms: '15000'
+      swagger_kafka_0_consumerConfig_default_api_timeout_ms: '5000'
+
+      swagger_kafka_0_producerConfig_retries: '0'
+      swagger_kafka_0_producerConfig_batch_size: '16384'
+      swagger_kafka_0_producerConfig_linger_ms: '1'
+      swagger_kafka_0_producerConfig_buffer_memory: '33554432'

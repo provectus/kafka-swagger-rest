@@ -35,7 +35,7 @@ class KafkaRecordBuilderTest {
         TopicParamSchema valueTopicParamSchema = new TopicParamSchema(TopicParamSchemaType.AVRO, valueSchema);
         TopicParamSchema keyTopicParamSchema = new TopicParamSchema(TopicParamSchemaType.STRING, null);
 
-        TopicSwaggerSchema swaggerSchema = new TopicSwaggerSchema("test", keyTopicParamSchema, valueTopicParamSchema);
+        TopicSwaggerSchema swaggerSchema = new TopicSwaggerSchema("test", keyTopicParamSchema, valueTopicParamSchema, null);
 
         ObjectNode kv = om.createObjectNode();
         kv.put("key", UUID.randomUUID().toString());

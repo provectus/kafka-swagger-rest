@@ -1,9 +1,12 @@
 swagger:
   kafka:
     - groupName: sdp
-      bootstrapServer: kafka1.public-sdp-kafka.squadex.devopskzn.ru:9092
+      bootstrapServers: kafka1.public-sdp-kafka.squadex.devopskzn.ru:9092
       schemaRegistryUrl: http://schema-registry.sdp-kafka.squadex.devopskzn.ru
+
       consumerConfig:
-        "[security.protocol]": SSL
+        security.protocol: SSL
       producerConfig:
-        "[security.protocol]": SSL
+        security.protocol: SSL
+
+      ignoreTopics: kafka-connect-cp-kafka-connect-config, kafka-connect-cp-kafka-connect-offset, kafka-connect-cp-kafka-connect-status

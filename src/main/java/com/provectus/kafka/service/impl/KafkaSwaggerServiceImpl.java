@@ -9,14 +9,15 @@ import com.provectus.kafka.swagger.config.SwaggerProperties;
 import io.swagger.models.Swagger;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.map.UnmodifiableMap;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.env.OriginTrackedMapPropertySource;
+import org.springframework.boot.web.reactive.context.StandardReactiveWebEnvironment;
+import org.springframework.core.env.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -83,6 +84,7 @@ public class KafkaSwaggerServiceImpl implements KafkaSwaggerService {
     public KafkaSwagger getKafkaSwagger(String group) {
         return kafkaSwaggerMap.get(group);
     }
+
     @Override
     public String getSwaggerSpec(String kafkaGroupName) {
         return kafkaSwaggerMap.get(kafkaGroupName).getSwaggerYaml();

@@ -1,6 +1,7 @@
 package com.provectus.kafka.model.schema;
 
 import com.fasterxml.jackson.dataformat.avro.AvroSchema;
+import com.provectus.kafka.model.config.TopicConfig;
 import lombok.*;
 import org.apache.avro.Schema;
 
@@ -13,6 +14,8 @@ public class TopicSwaggerSchema {
     private String topic;
     private TopicParamSchema keySchema;
     private TopicParamSchema valueSchema;
+
+    private TopicConfig autofillTopicConfig;
 
     public boolean updateKeySchema(AvroSchema schema) {
         return updateSchema(keySchema, schema);
