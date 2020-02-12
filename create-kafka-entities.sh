@@ -15,7 +15,7 @@ IFS=,
 
 for topic in $topics; do
   echo Creating topic: $topic
-  kafka-topics --bootstrap-server $bootstrap --topic $topic --partitions 1 --replication-factor 1
+  kafka-topics --bootstrap-server $bootstrap --create --topic $topic --partitions 1 --replication-factor 1
 done
 
 exit 0
