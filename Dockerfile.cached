@@ -1,0 +1,13 @@
+# Image: provectuslabs/kafka-cmds
+
+FROM openjdk:11.0.3-slim
+
+RUN set -x \
+    && apt-get update \
+    && apt-get install -y wget gnupg software-properties-common
+
+RUN add-apt-repository "deb [arch=amd64] https://packages.confluent.io/deb/5.4 stable main"\
+    && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 670540C841468433 \
+    && apt-get update \
+    && apt-get install -y confluent-kafka-2.12 confluent-schema-registry
+
