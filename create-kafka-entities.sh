@@ -4,11 +4,18 @@ bootstrap=$CREATE_TOPICS_BOOTSTRAP_SERVERS
 topics=$CREATE_TOPICS_LIST
 
 if [[ -z $bootstrap ]]; then
-  echo Bootstrap servers not found. Exit.
+  echo Bootstrap servers not found
+  exit=1
 fi
 
 if [[ -z $topics ]]; then
-  echo Topic list not found. Exit.
+  echo Topic list not found
+  exit=1
+fi
+
+if [[ ! -z $exit ]]; then
+  echo Exit
+  exit 0
 fi
 
 IFS=,
