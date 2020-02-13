@@ -24,11 +24,11 @@ Docker compose example:
           swagger_kafka[0]_bootstrapServers: 'kafka:29092'
           swagger_kafka[0]_schemaRegistryUrl: 'http://host.docker.internal:8081'
           
-          swagger.kafka[0].consumerConfig."[enable.auto.commit]": 'true'
-          swagger.kafka[0].consumerConfig."[auto.commit.interval.ms]": '100'
+          swagger.kafka[0].consumerConfig.enable.auto.commit: 'true'
+          swagger.kafka[0].consumerConfig.auto.commit.interval.ms: '100'
           
-          swagger.kafka[0].producerConfig."[retries]": '0'
-          swagger.kafka[0].producerConfig."[batch.size]": '16384'
+          swagger.kafka[0].producerConfig.retries: '0'
+          swagger.kafka[0].producerConfig.batch.size: '16384'
           
           swagger.kafka[0].topicConfig[0].topicName: 'users-avro2'
           swagger.kafka[0].topicConfig[0].autofillKeyParamName: 'ID'
@@ -76,6 +76,8 @@ Another example docker compose:
 | swagger.kafka[0].topicConfig[0] | Topic Config |
 | swagger.kafka[0].topicConfig[0].topicName | Topic Name |
 | swagger.kafka[0].topicConfig[0].autofillKeyParamName | ParamName to autofill Key from Value data. If topic message is Avro object and you want to autofill key from some field (like: ID) then you need to set this param value to "ID" and key value will be autofilled from "ID" |
+| --- | --- |
+| swagger_kafka_0_ignoreTopics | ignore topics list, delimiter: ',' |
 
 ## How to build
 Required:
