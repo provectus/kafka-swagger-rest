@@ -37,6 +37,7 @@ public class KafkaSwaggerServiceImpl implements KafkaSwaggerService {
             try {
                 registerKafka(kafkaSwaggerConfig);
             } catch (KafkaSwaggerException e) {
+                log.error(e.getMessage(), e);
                 log.error("Unable to register kafka swagger: {}. Error: {}", kafkaSwaggerConfig, e.getMessage());
             }
         }
