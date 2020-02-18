@@ -1,5 +1,17 @@
 # Kafka Swagger Rest
-Kafka Swagger Rest is a Swagger API that allows to send data to kafka topics via Restful api
+
+Kafka Swagger Rest is a Swagger API that allows to send data to kafka topics via Restful api.
+
+![diagram.svg](images/diagram.png)
+
+Convention between Kafka topic name & key-value Schema name:
+ 
+- Key schema name: "<topic>-key"
+- Value schema name: "<topic>-value"
+
+#### Usages:
+- You want to check what topics is available in kafka and what schema is available for topics
+- You want to send messages into topics via Rest API
 
 Supports 2 types of message format for topic:
 - plain text
