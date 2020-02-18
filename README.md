@@ -6,8 +6,8 @@ Kafka Swagger Rest is a Swagger API that allows to send data to kafka topics via
 
 Convention between Kafka topic name & key-value Schema name:
  
-- Key schema name: "<topic>-key"
-- Value schema name: "<topic>-value"
+- Key schema name: "{topic}-key"
+- Value schema name: "{topic}-value"
 
 #### Usages:
 - You want to check what topics is available in kafka and what schema is available for topics
