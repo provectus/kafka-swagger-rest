@@ -6,7 +6,6 @@ import com.provectus.kafka.model.config.KafkaSwaggerConfig;
 import com.provectus.kafka.model.KafkaSwaggerSpecAssert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.kafka.test.context.EmbeddedKafka;
 
 import java.io.IOException;
 import java.util.*;

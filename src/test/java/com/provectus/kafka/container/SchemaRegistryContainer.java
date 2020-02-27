@@ -3,6 +3,7 @@ package com.provectus.kafka.container;
 import okhttp3.*;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.KafkaContainer;
+import org.testcontainers.containers.Network;
 
 import java.io.IOException;
 
@@ -13,7 +14,7 @@ public class SchemaRegistryContainer extends GenericContainer<SchemaRegistryCont
 
     public SchemaRegistryContainer(String imageVersion, KafkaContainer kafka) {
         setDockerImageName("confluentinc/cp-schema-registry:" + imageVersion);
-        withNetwork(kafka.getNetwork());
+        withNetwork(Network.SHARED);
         withExposedPorts(8081);
         withEnv("SCHEMA_REGISTRY_HOST_NAME", "schema-registry");
         withEnv("SCHEMA_REGISTRY_LISTENERS", "http://0.0.0.0:8081");
