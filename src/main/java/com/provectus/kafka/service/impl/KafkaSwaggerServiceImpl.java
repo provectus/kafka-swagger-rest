@@ -65,7 +65,6 @@ public class KafkaSwaggerServiceImpl implements KafkaSwaggerService {
     @Override
     public KafkaSwagger registerKafka(KafkaSwaggerConfig kafkaSwaggerConfig) {
         KafkaSwagger kafkaSwagger = new KafkaSwagger(kafkaSwaggerConfig);
-        kafkaSwagger.init();
         kafkaSwaggerMap.put(kafkaSwaggerConfig.getGroupName(), kafkaSwagger);
         log.info("kafka-swagger registered with config: " + kafkaSwaggerConfig);
         return kafkaSwagger;

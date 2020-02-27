@@ -32,13 +32,18 @@ public class KafkaSwagger {
     private Swagger swagger;
     private String swaggerYaml;
 
+    private TopicNameMatcher topicNameMatcher;
+
     public KafkaSwagger(KafkaSwaggerConfig config) {
         kafkaSchemaRegistryRestClient = new KafkaSchemaRegistryRestClientImpl(config.schemaRegistryConfig());
 
         this.config = config;
+        this.topicNameMatcher = new TopicNameMatcher(config.getIgnoreTopics(), config.getIgnoreTopicsRegexp());
+
+        init();
     }
 
-    public void init() {
+    private void init() {
         kafkaSwaggerClient = new KafkaSwaggerClient(config);
         kafkaSwaggerClient.subscribe(this::syncSchema);
 
@@ -47,16 +52,12 @@ public class KafkaSwagger {
         kafkaSwaggerClient.start();
     }
 
-    public void stop() {
-        kafkaSwaggerClient.stop();
-    }
-
     private void initKafkaSchema() {
         kafkaSchemaRegistryRestClient.waitIsReady();
         kafkaSwaggerSchema = new KafkaSwaggerSchema();
 
         List<String> topics = kafkaSwaggerClient.getTopics().stream()
-                .filter(topicName -> !topicName.startsWith("_"))
+                .filter(topicName -> !topicNameMatcher.matches(topicName))
                 .collect(Collectors.toList());
 
         topics.stream()
@@ -116,6 +117,10 @@ public class KafkaSwagger {
             log.error("Unable to buildKeyValue swaggerSpec: " + e.getMessage());
             throw new RuntimeException(e.getMessage(), e);
         }
+    }
+
+    public void stop() {
+        kafkaSwaggerClient.stop();
     }
 
     public KafkaSwaggerConfig getConfig() {

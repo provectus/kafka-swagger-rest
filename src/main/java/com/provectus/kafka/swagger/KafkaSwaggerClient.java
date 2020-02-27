@@ -88,7 +88,7 @@ public class KafkaSwaggerClient {
             return kafkaConsumer.listTopics().keySet();
         } catch (KafkaException e) {
             log.error("Error on load listTopics: {}. ", e.getMessage());
-            throw new KafkaSwaggerException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+            throw new KafkaSwaggerException(e.getMessage(), e);
         }
     }
 

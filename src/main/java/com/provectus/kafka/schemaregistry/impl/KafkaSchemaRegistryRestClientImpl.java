@@ -74,7 +74,7 @@ public class KafkaSchemaRegistryRestClientImpl implements KafkaSchemaRegistryRes
                 isReady = true;
             } catch (Exception e) {
                 if (System.currentTimeMillis() - startTime > timeout) {
-                    throw new KafkaSwaggerException(HttpStatus.INTERNAL_SERVER_ERROR, "Error on init KafkaSchemaRegistryClient by timeout. " + e.getMessage(), e);
+                    throw new KafkaSwaggerException("Error on init KafkaSchemaRegistryClient by timeout. " + e.getMessage(), e);
                 }
                 Thread.sleep(1000);
             }
