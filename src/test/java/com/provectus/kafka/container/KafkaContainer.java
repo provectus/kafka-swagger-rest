@@ -20,6 +20,7 @@ public class KafkaContainer extends org.testcontainers.containers.KafkaContainer
 
     private KafkaConsumer<String, String> consumer;
     private KafkaProducer<String, String> producer;
+    private AdminClient adminClient;
 
     public KafkaContainer(String imageVersion) {
         super(imageVersion);
@@ -46,14 +47,14 @@ public class KafkaContainer extends org.testcontainers.containers.KafkaContainer
                 new StringSerializer(),
                 new StringSerializer()
         );
-    }
 
-    public void createTopics(Set<String> topics) {
         Properties properties = new Properties();
         properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, getBootstrapServers());
 
-        AdminClient adminClient = AdminClient.create(properties);
+        adminClient = AdminClient.create(properties);
+    }
 
+    public void createTopics(Set<String> topics) {
         List<NewTopic> newTopics = topics.stream()
                 .map(topic -> new NewTopic(topic, 1, (short) 1))
                 .collect(Collectors.toList());
