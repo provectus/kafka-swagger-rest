@@ -31,6 +31,7 @@ public class KafkaSwaggerConfig {
 
     private void initConsumerConfig() {
         consumerConfig.putIfAbsent(ConsumerConfig.GROUP_ID_CONFIG, "kafka-swagger-rest");
+        consumerConfig.putIfAbsent(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         consumerConfig.putIfAbsent(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
         consumerConfig.putIfAbsent(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "100");
         consumerConfig.putIfAbsent(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "15000");
