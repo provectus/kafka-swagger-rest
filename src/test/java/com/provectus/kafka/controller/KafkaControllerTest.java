@@ -134,11 +134,10 @@ public class KafkaControllerTest {
     }
 
     private Boolean verifyMessageSendedToTopic(String topic) {
-        KafkaConsumer<String, String> consumer = kafkaEnvironmentCluster.getKafka().getNewConsumer();
+        KafkaConsumer<String, String> consumer = kafkaEnvironmentCluster.getKafka().getConsumer();
         consumer.subscribe(Arrays.asList(topic));
         ConsumerRecords<String, String> records = consumer.poll(Duration.ofSeconds(1));
-        consumer.close();
-        return records.count() > 0;
+        return records.count() == 1;
     }
 
     private static ConfigurableApplicationContext applicationContext() {

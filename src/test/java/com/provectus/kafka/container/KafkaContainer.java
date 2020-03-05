@@ -16,7 +16,6 @@ import org.testcontainers.shaded.com.google.common.collect.ImmutableMap;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Getter
 public class KafkaContainer extends org.testcontainers.containers.KafkaContainer {
 
     private KafkaConsumer<String, String> consumer;
@@ -29,37 +28,46 @@ public class KafkaContainer extends org.testcontainers.containers.KafkaContainer
         setNetwork(Network.SHARED);
     }
 
-    @Override
-    public void start() {
-        super.start();
+    public KafkaConsumer<String, String> getConsumer() {
+        if (consumer == null) {
+            Map<String, Object> properties = new HashMap<>();
+            properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, getBootstrapServers());
+            properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+            properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
+            properties.put(ConsumerConfig.GROUP_ID_CONFIG, UUID.randomUUID().toString());
+            properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+            properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
 
-        producer = new KafkaProducer<>(
-                ImmutableMap.of(
-                        ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, getBootstrapServers(),
-                        ProducerConfig.CLIENT_ID_CONFIG, UUID.randomUUID().toString()
-                ),
-                new StringSerializer(),
-                new StringSerializer()
-        );
+            consumer = new KafkaConsumer<>(properties);
+        }
 
-        Properties properties = new Properties();
-        properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, getBootstrapServers());
-
-        adminClient = AdminClient.create(properties);
+        return consumer;
     }
 
-    public KafkaConsumer<String, String> getNewConsumer() {
-        KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(
-                ImmutableMap.of(
-                        ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, getBootstrapServers(),
-                        ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest",
-                        ConsumerConfig.GROUP_ID_CONFIG, UUID.randomUUID().toString(),
-                        ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class,
-                        ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class
-                )
-        );
+    public AdminClient getAdminClient() {
+        if (adminClient == null) {
+            Properties properties = new Properties();
+            properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, getBootstrapServers());
 
-        return kafkaConsumer;
+            adminClient = AdminClient.create(properties);
+        }
+
+        return adminClient;
+    }
+
+    public KafkaProducer<String, String> getProducer() {
+        if (producer == null) {
+            producer = new KafkaProducer<>(
+                    ImmutableMap.of(
+                            ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, getBootstrapServers(),
+                            ProducerConfig.CLIENT_ID_CONFIG, UUID.randomUUID().toString()
+                    ),
+                    new StringSerializer(),
+                    new StringSerializer()
+            );
+        }
+
+        return producer;
     }
 
     public void createTopics(Set<String> topics) {
@@ -67,6 +75,6 @@ public class KafkaContainer extends org.testcontainers.containers.KafkaContainer
                 .map(topic -> new NewTopic(topic, 1, (short) 1))
                 .collect(Collectors.toList());
 
-        adminClient.createTopics(newTopics);
+        getAdminClient().createTopics(newTopics);
     }
 }
