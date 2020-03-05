@@ -4,24 +4,24 @@ import lombok.Getter;
 import org.assertj.core.api.Assertions;
 
 @Getter
-public class KafkaTestEnvironmentContainer {
+public class KafkaTestEnvironmentCluster {
 
     private KafkaContainer kafka;
     private SchemaRegistryContainer schemaRegistry;
 
     private String imageVersion;
 
-    public KafkaTestEnvironmentContainer(String imageVersion) {
+    public KafkaTestEnvironmentCluster(String imageVersion) {
         this.imageVersion = imageVersion;
     }
 
-    public KafkaTestEnvironmentContainer withKafka() {
+    public KafkaTestEnvironmentCluster withKafka() {
         kafka = new KafkaContainer(imageVersion);
 
         return this;
     }
 
-    public KafkaTestEnvironmentContainer withSchemaRegistry() {
+    public KafkaTestEnvironmentCluster withSchemaRegistry() {
         Assertions.assertThat(kafka).isNotNull();
 
         schemaRegistry = new SchemaRegistryContainer(imageVersion, kafka);
@@ -29,7 +29,7 @@ public class KafkaTestEnvironmentContainer {
         return this;
     }
 
-    public KafkaTestEnvironmentContainer start() {
+    public KafkaTestEnvironmentCluster start() {
         if (kafka != null) kafka.start();
         if (schemaRegistry != null) schemaRegistry.start();
 

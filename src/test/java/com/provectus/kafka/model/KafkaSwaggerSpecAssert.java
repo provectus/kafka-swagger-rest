@@ -1,6 +1,7 @@
 package com.provectus.kafka.model;
 
 import com.provectus.kafka.model.config.KafkaSwaggerConfig;
+import com.provectus.kafka.model.schema.TopicParamSchemaType;
 import io.swagger.models.Swagger;
 
 import java.util.Set;

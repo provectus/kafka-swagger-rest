@@ -1,8 +1,11 @@
+server:
+  port: 8888
+
 swagger:
   kafka:
     - groupName: localhost
       bootstrapServers: localhost:9092
-      schemaRegistryUrl: http://host.docker.internal:8081
+      schemaRegistryUrl: http://localhost:8081
       consumerConfig:
         group.id: 'kafka-swagger-rest'
         enable.auto.commit: 'true'

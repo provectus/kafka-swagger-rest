@@ -32,7 +32,6 @@ public class KafkaSwaggerServiceImpl implements KafkaSwaggerService {
 
     @PostConstruct
     public void initKafkaFromConfiguration() {
-        log.info(swaggerProperties.toString());
         for (KafkaSwaggerConfig kafkaSwaggerConfig: swaggerProperties.getKafka()) {
             try {
                 registerKafka(kafkaSwaggerConfig);
