@@ -9,7 +9,9 @@ import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.properties.*;
 import org.apache.avro.Schema;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class KafkaSwaggerBuilder {
 
@@ -141,13 +143,19 @@ public class KafkaSwaggerBuilder {
                 objectProperty.property(field.name(), fieldProperty(field.schema()));
             }
             return objectProperty;
+        } else if (avroSchema.getType() == Schema.Type.UNION) {
+            ObjectProperty objectProperty = new ObjectProperty();
+            for (Schema type : avroSchema.getTypes()) {
+                objectProperty.property(type.getName(), fieldProperty(type));
+            }
+            return objectProperty;
         }
 
         return fieldProperty(avroSchema);
     }
 
     private Property fieldProperty(Schema schema) {
-        //TODO: handle types MAP?, UNION, FIXED?, NULL;
+        //TODO: handle types UNION,  NULL;
 
         switch(schema.getType()) {
             case STRING:
@@ -165,6 +173,7 @@ public class KafkaSwaggerBuilder {
             case DOUBLE:
                 return new DoubleProperty();
             case RECORD:
+            case UNION:
                 return avroProperty(schema);
             case ARRAY:
                 return new ArrayProperty(fieldProperty(schema.getElementType()));
@@ -174,6 +183,8 @@ public class KafkaSwaggerBuilder {
                 return stringProperty()._enum(schema.getEnumSymbols());
             case MAP:
                 return new MapProperty(fieldProperty(schema.getValueType()));
+            case NULL:
+                return stringProperty()._enum("null").example("null");
         }
         return stringProperty();
     }

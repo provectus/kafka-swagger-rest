@@ -12,7 +12,6 @@ import java.util.*;
 
 @ToString
 @Builder(toBuilder = true)
-@AllArgsConstructor
 public class KafkaSwaggerConfig {
 
     private String groupName;
@@ -23,10 +22,27 @@ public class KafkaSwaggerConfig {
     private List<TopicConfig> topicConfig = new ArrayList<>();
 
     private Set<String> ignoreTopics = new HashSet<>();
+    private Set<String> ignoreTopicsRegexp = new HashSet<>();
+
+    public KafkaSwaggerConfig(String groupName, String bootstrapServers, String schemaRegistryUrl, Map<String, Object> consumerConfig, Map<String, Object> producerConfig, List<TopicConfig> topicConfig, Set<String> ignoreTopics, Set<String> ignoreTopicsRegexp) {
+        this.groupName = groupName;
+        this.consumerConfig = consumerConfig;
+        this.producerConfig = producerConfig;
+        this.topicConfig = topicConfig;
+        this.ignoreTopics = ignoreTopics;
+        this.ignoreTopicsRegexp = ignoreTopicsRegexp;
+
+        setSchemaRegistryUrl(schemaRegistryUrl);
+        setBootstrapServers(bootstrapServers);
+        initConsumerConfig();
+        initProducerConfig();
+        initDefaultIgnoreTopicsRegexp();
+    }
 
     public KafkaSwaggerConfig() {
         initConsumerConfig();
         initProducerConfig();
+        initDefaultIgnoreTopicsRegexp();
     }
 
     private void initConsumerConfig() {
@@ -47,6 +63,10 @@ public class KafkaSwaggerConfig {
         producerConfig.putIfAbsent(ProducerConfig.BUFFER_MEMORY_CONFIG, 33554432);
         producerConfig.putIfAbsent(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         producerConfig.putIfAbsent(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
+    }
+
+    private void initDefaultIgnoreTopicsRegexp() {
+        ignoreTopicsRegexp.add("_.+"); // by default ignore all topics that starts with "_"
     }
 
     public String getGroupName() {
@@ -99,6 +119,10 @@ public class KafkaSwaggerConfig {
         return ignoreTopics;
     }
 
+    public Set<String> getIgnoreTopicsRegexp() {
+        return ignoreTopicsRegexp;
+    }
+
     public void setIgnoreTopics(Set<String> ignoreTopics) {
         this.ignoreTopics = ignoreTopics;
     }
@@ -125,5 +149,26 @@ public class KafkaSwaggerConfig {
         if (configOptional.isPresent()) return configOptional.get();
 
         return null;
+    }
+
+    public static class KafkaSwaggerConfigBuilder {
+
+        public KafkaSwaggerConfigBuilder() {
+            this.producerConfig = new HashMap<>();
+            this.consumerConfig = new HashMap<>();
+            this.topicConfig = new ArrayList<>();
+            this.ignoreTopics = new HashSet<>();
+            this.ignoreTopicsRegexp = new HashSet<>();
+        }
+
+        public KafkaSwaggerConfigBuilder producerConfigParam(String key, Object value) {
+            this.producerConfig.put(key, value);
+            return this;
+        }
+
+        public KafkaSwaggerConfigBuilder consumerConfigParam(String key, Object value) {
+            this.consumerConfig.put(key, value);
+            return this;
+        }
     }
 }
