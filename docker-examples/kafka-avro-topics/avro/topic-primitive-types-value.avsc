@@ -1,0 +1,14 @@
+{
+  "namespace": "com.provectus.model",
+  "type": "record",
+  "name": "PrimitiveTypes",
+  "fields": [
+    {"name": "string", "type": "string"},
+    {"name": "int", "type": "int"},
+    {"name": "long", "type": "long"},
+    {"name": "float", "type": "float"},
+    {"name": "double", "type": "double"},
+    {"name": "bytes", "type": "bytes"},
+    {"name": "null", "type": "null"}
+  ]
+}

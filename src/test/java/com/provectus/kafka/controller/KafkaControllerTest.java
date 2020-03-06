@@ -14,9 +14,9 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.awaitility.Awaitility;
 import org.json.JSONObject;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.SocketUtils;
@@ -40,7 +40,7 @@ public class KafkaControllerTest {
 
     private static final Set TOPICS = Set.of(STRING_TOPIC, AVRO_TOPIC);
 
-    @BeforeClass
+    @BeforeAll
     public static void before() throws IOException {
         port = SocketUtils.findAvailableTcpPort();
         kafkaEnvironmentCluster = new KafkaTestEnvironmentCluster("5.1.0")
@@ -58,13 +58,13 @@ public class KafkaControllerTest {
         RestAssured.port = port;
     }
 
-    @AfterClass
+    @AfterAll
     public static void shutdown() {
         context.close();
     }
 
     @Test
-    public void test_sendValueMessage_stringFormat() throws IOException {
+    public void test_sendValueMessage_stringFormat() {
         RestAssured.given()
                 .contentType(ContentType.JSON)
                 .body("\"test\"")
