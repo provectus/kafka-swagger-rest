@@ -121,6 +121,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-models</artifactId>
+            <version>2.1.1</version>
+        </dependency>
 
         <dependency>
             <groupId>io.springfox</groupId>

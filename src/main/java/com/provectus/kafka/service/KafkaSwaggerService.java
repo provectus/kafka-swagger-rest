@@ -3,7 +3,7 @@ package com.provectus.kafka.service;
 import com.provectus.kafka.swagger.KafkaSwagger;
 import com.provectus.kafka.model.config.KafkaSwaggerConfig;
 import com.provectus.kafka.model.schema.TopicSwaggerSchema;
-import io.swagger.models.Swagger;
+import io.swagger.v3.oas.models.OpenAPI;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ public interface KafkaSwaggerService {
 
     List<KafkaSwagger> getKafkaSwaggers();
 
-    List<Swagger> getSwaggers();
+    List<OpenAPI> getSwaggers();
 
     List<String> getSwaggerSpecs();
 

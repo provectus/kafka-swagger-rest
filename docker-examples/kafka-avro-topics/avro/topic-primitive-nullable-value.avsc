@@ -3,11 +3,11 @@
   "type": "record",
   "name": "PrimitiveNullableTypes",
   "fields": [
-    {"name": "string", "type": ["string", "null"]},
-    {"name": "int", "type": "int"},
-    {"name": "long", "type": "long"},
-    {"name": "float", "type": "float"},
-    {"name": "double", "type": "double"},
-    {"name": "bytes", "type": "bytes"}
+    {"name": "stringParam", "type": ["string", "null"]},
+    {"name": "intParam", "type": "int"},
+    {"name": "longParam", "type": "long"},
+    {"name": "floatParam", "type": "float"},
+    {"name": "doubleParam", "type": "double"},
+    {"name": "bytesParam", "type": "bytes"}
   ]
 }

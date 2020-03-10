@@ -6,14 +6,10 @@ import com.provectus.kafka.model.config.KafkaSwaggerConfig;
 import com.provectus.kafka.model.schema.TopicSwaggerSchema;
 import com.provectus.kafka.service.KafkaSwaggerService;
 import com.provectus.kafka.swagger.config.SwaggerProperties;
-import io.swagger.models.Swagger;
+import io.swagger.v3.oas.models.OpenAPI;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.map.UnmodifiableMap;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.env.OriginTrackedMapPropertySource;
-import org.springframework.boot.web.reactive.context.StandardReactiveWebEnvironment;
-import org.springframework.core.env.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -48,7 +44,7 @@ public class KafkaSwaggerServiceImpl implements KafkaSwaggerService {
     }
 
     @Override
-    public List<Swagger> getSwaggers() {
+    public List<OpenAPI> getSwaggers() {
         return kafkaSwaggerMap.values().stream()
                 .map(KafkaSwagger::getSwagger)
                 .collect(Collectors.toList());
