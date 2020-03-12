@@ -144,8 +144,11 @@ public class KafkaSwaggerBuilder {
             case UNION:
                 ComposedSchema oneOfSchema = new ComposedSchema();
                 oneOfSchema.name(avroSchema.getName());
-                for (org.apache.avro.Schema type : avroSchema.getTypes()) {
-                    oneOfSchema.addOneOfItem(buildSwaggerSchema(type));
+                for (org.apache.avro.Schema typeSchema : avroSchema.getTypes()) {
+                    oneOfSchema.addOneOfItem(buildSwaggerSchema(typeSchema));
+                    if (typeSchema.getType() == org.apache.avro.Schema.Type.NULL) {
+                        oneOfSchema.example("null");
+                    }
                 }
                 return oneOfSchema;
             case ARRAY:
