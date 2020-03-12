@@ -43,10 +43,13 @@ services:
       bash -c 'echo Waiting for Kafka to be ready... && \
         cub kafka-ready -b kafka:29092 1 20 && \
         kafka-topics --create --topic users --partitions 1 --replication-factor 1 --if-not-exists --zookeeper zookeeper:2181 && \
+        kafka-topics --create --topic topic-primitive-nullable --partitions 1 --replication-factor 1 --if-not-exists --zookeeper zookeeper:2181 && \
+        kafka-topics --create --topic topic-primitive-types --partitions 1 --replication-factor 1 --if-not-exists --zookeeper zookeeper:2181 && \
+        kafka-topics --create --topic topic-linkedlist --partitions 1 --replication-factor 1 --if-not-exists --zookeeper zookeeper:2181 && \
 
         echo Waiting for schema-registry to be ready... && \
         cub sr-ready schema-registry 8081 20 && \
-        for item in "users-value"; do curl -X POST -H "Content-Type: application/vnd.schemaregistry.v1+json" \
+        for item in "users-value" "topic-linkedlist-value" "topic-primitive-nullable-value" "topic-primitive-types-value"; do curl -X POST -H "Content-Type: application/vnd.schemaregistry.v1+json" \
         --data "{\"schema\": \"$$(python /util/stringify.py /avro/$$item.avsc)\" }" \
         http://schema-registry:8081/subjects/$$item/versions; done
         '

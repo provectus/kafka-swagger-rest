@@ -3,7 +3,6 @@ package com.provectus.kafka.swagger;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.avro.AvroSchema;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.provectus.kafka.model.KafkaSwaggerBuilder;
 import com.provectus.kafka.schemaregistry.KafkaSchemaRegistryRestClient;
@@ -12,9 +11,7 @@ import com.provectus.kafka.schemaregistry.model.Schema;
 import com.provectus.kafka.model.config.KafkaSwaggerConfig;
 import com.provectus.kafka.model.schema.KafkaSwaggerSchema;
 import com.provectus.kafka.model.schema.TopicSwaggerSchema;
-import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
-import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
-import io.swagger.models.Swagger;
+import io.swagger.v3.oas.models.OpenAPI;
 import lombok.extern.slf4j.Slf4j;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -29,7 +26,7 @@ public class KafkaSwagger {
     private KafkaSwaggerClient kafkaSwaggerClient;
     private KafkaSwaggerSchema kafkaSwaggerSchema;
 
-    private Swagger swagger;
+    private OpenAPI swagger;
     private String swaggerYaml;
 
     private TopicNameMatcher topicNameMatcher;
@@ -131,7 +128,7 @@ public class KafkaSwagger {
         return kafkaSwaggerSchema;
     }
 
-    public Swagger getSwagger() {
+    public OpenAPI getSwagger() {
         return swagger;
     }
 
