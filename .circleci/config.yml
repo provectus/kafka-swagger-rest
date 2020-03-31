@@ -28,9 +28,10 @@ jobs:
 
       - setup_remote_docker
       - run:
-          name: Install awscli, build project and push images
+          name: Build project and push images
           command: |
             set -x
+            export TESTCONTAINERS_RYUK_DISABLED=true
             mvn clean package
 
       - save_cache:
