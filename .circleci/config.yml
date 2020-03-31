@@ -1,9 +1,40 @@
-version: 2.1
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/openjdk:11-jdk
 
-orbs:
-  maven: circleci/maven@0.0.12
+    working_directory: ~/repo
 
-workflows:
-  maven_test:
-    jobs:
-      - maven/test # checkout, build, test, and upload test results
+    environment:
+      # Customize the JVM maximum heap limit
+      MAVEN_OPTS: -Xmx3200m
+
+    steps:
+      - checkout
+      - run:
+          name: Generate cumulative pom.xml checksum
+          command: |
+            find . -type f -name "pom.xml" -exec sh -c "sha256sum {} >> ~/pom-checksum.tmp" \;
+            sort -o ~/pom-checksum ~/pom-checksum.tmp
+          when: always
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "~/pom-checksum" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      - setup_remote_docker
+      - run:
+          name: Install awscli, build project and push images
+          command: |
+            set -x
+            mvn clean package
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: v1-dependencies-{{ checksum "~/pom-checksum" }}
+
