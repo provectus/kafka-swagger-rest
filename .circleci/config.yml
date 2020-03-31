@@ -31,8 +31,7 @@ jobs:
           name: Build project and push images
           command: |
             set -x
-            export TESTCONTAINERS_RYUK_DISABLED=true
-            mvn clean package
+            mvn clean package -DskipTests=true
 
       - save_cache:
           paths:
