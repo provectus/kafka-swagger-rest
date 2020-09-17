@@ -16,42 +16,48 @@ public class JsonUnionEnricher {
   }
 
   public JsonNode enrich(JsonNode in, Schema schema) {
-    ObjectNode node = in.deepCopy();
-    for (Schema.Field field : schema.getFields()) {
-      final Schema fieldSchema = field.schema();
-      final JsonNode value = node.get(field.name());
+    if (in.isObject()) {
+      ObjectNode node = in.deepCopy();
+      for (Schema.Field field : schema.getFields()) {
+        final Schema fieldSchema = field.schema();
+        final JsonNode value = node.get(field.name());
 
-      if (fieldSchema.isUnion() && fieldSchema.isNullable() && fieldSchema.getTypes().size() == 2) {
-        if (value != null && !value.isNull()) {
+        if (fieldSchema.isUnion() && fieldSchema.isNullable() &&
+            fieldSchema.getTypes().size() == 2) {
+          if (value != null && !value.isNull()) {
 
-          final Schema dataSchema = fieldSchema.getTypes().stream()
-              .filter(t -> !t.isNullable())
-              .findFirst().get();
+            final Schema dataSchema = fieldSchema.getTypes().stream()
+                .filter(t -> !t.isNullable())
+                .findFirst().get();
 
-          List<Schema.Type> skipped = Arrays.asList(
-              Schema.Type.RECORD,
-              Schema.Type.MAP,
-              Schema.Type.ARRAY,
-              Schema.Type.UNION,
-              Schema.Type.NULL,
-              Schema.Type.ENUM
-          );
+            List<Schema.Type> skipped = Arrays.asList(
+                Schema.Type.RECORD,
+                Schema.Type.MAP,
+                Schema.Type.ARRAY,
+                Schema.Type.UNION,
+                Schema.Type.NULL,
+                Schema.Type.ENUM
+            );
 
-          if (!skipped.contains(dataSchema.getType())) {
-            setObject(node, field.name(), dataSchema.getType().name().toLowerCase(), value);
+            if (!skipped.contains(dataSchema.getType())) {
+              setObject(node, field.name(), dataSchema.getType().name().toLowerCase(), value);
+            }
+
+            if (dataSchema.getType().equals(Schema.Type.RECORD)) {
+              setObject(node, field.name(), dataSchema.getFullName(),
+                  this.enrich(value, dataSchema));
+            }
+          } else if (value == null) {
+            node.putNull(field.name());
           }
-
-          if (dataSchema.getType().equals(Schema.Type.RECORD)) {
-            setObject(node, field.name(), dataSchema.getFullName(), this.enrich(value, dataSchema));
-          }
-        } else if (value == null) {
-          node.putNull(field.name());
+        } else if (fieldSchema.getType().equals(Schema.Type.RECORD)) {
+          node.set(field.name(), this.enrich(value, fieldSchema));
         }
-      } else if (fieldSchema.getType().equals(Schema.Type.RECORD)) {
-        node.set(field.name(), this.enrich(value, fieldSchema));
       }
+      return node;
+    } else {
+      return in;
     }
-    return node;
   }
 
   private ObjectNode setObject(ObjectNode source, String fieldName, String type, JsonNode value) {

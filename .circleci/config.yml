@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/openjdk:11-jdk
+      - image: circleci/openjdk:14-jdk
 
     branches:
       only:
@@ -35,7 +35,7 @@ jobs:
           name: Build project and push images
           command: |
             set -x
-            mvn clean package -DskipTests=true
+            mvn clean package
 
             echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_LOGIN --password-stdin
 
