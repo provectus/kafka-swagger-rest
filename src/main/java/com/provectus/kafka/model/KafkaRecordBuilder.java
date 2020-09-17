@@ -2,6 +2,7 @@ package com.provectus.kafka.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.provectus.kafka.model.schema.TopicParamSchema;
 import com.provectus.kafka.model.schema.TopicSwaggerSchema;
 import org.apache.avro.Schema;
@@ -19,7 +20,8 @@ import java.util.Optional;
 
 public class KafkaRecordBuilder {
 
-    private ObjectMapper om = new ObjectMapper();
+    private final ObjectMapper om = new ObjectMapper();
+    private final JsonUnionEnricher enricher = new JsonUnionEnricher(om);
 
     public Map.Entry<Object, Object> buildKeyValue(TopicSwaggerSchema topicSwaggerSchema, JsonNode jsonNode) throws Exception {
         Object key = getObject(jsonNode, "key", topicSwaggerSchema.getKeySchema());
@@ -52,14 +54,15 @@ public class KafkaRecordBuilder {
             case STRING:
                 return node.asText();
             case AVRO:
-                return parseJson(node.toString(), schema.getAvroSchema().getAvroSchema());
+                return parseJson(node, schema.getAvroSchema().getAvroSchema());
         }
 
         return null;
     }
 
-    private static Object parseJson(String json, Schema schema) throws Exception {
-        InputStream input = new ByteArrayInputStream(json.getBytes());
+    private Object parseJson(JsonNode json, Schema schema) throws Exception {
+        final JsonNode enriched = enricher.enrich(json, schema);
+        InputStream input = new ByteArrayInputStream(enriched.toString().getBytes());
         DataInputStream din = new DataInputStream(input);
 
         DatumReader reader = new GenericDatumReader(schema);
