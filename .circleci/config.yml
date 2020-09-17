@@ -35,7 +35,7 @@ jobs:
           name: Build project and push images
           command: |
             set -x
-            mvn clean package
+            mvn clean package -DskipTests=true
 
             echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_LOGIN --password-stdin
 
