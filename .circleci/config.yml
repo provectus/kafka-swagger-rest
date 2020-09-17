@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/openjdk:14-jdk
+      - image: cimg/openjdk:14.0.2
 
     branches:
       only:
